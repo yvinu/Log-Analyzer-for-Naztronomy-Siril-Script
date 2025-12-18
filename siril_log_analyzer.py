@@ -23,7 +23,7 @@ Usage:
 Version: 1.0.0
 Date: 2025-12-17
 
-Author: AI Assistant (Gemini)
+Author: Vinu Yamunan (with Gemini AI Assistant)
 Created for: Nazmus Nasir (Naztronomy) - Naztronomy Smart Telescope Preprocessor
 License: GPL-3.0-or-later (matching parent project)
 
@@ -32,7 +32,6 @@ This script is part of the Naztronomy Smart Telescope Preprocessing suite:
     YouTube: https://www.YouTube.com/Naztronomy
     Discord: https://discord.gg/yXKqrawpjr
     
-For support with this analyzer, refer to the Naztronomy community or documentation.
 
 CHANGELOG:
     1.0.0 (2025-12-17) - Initial release
