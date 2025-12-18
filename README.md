@@ -2,34 +2,20 @@
 
 ## Naztronomy-Smart_Telescope_PP.py
 
-A comprehensive Python script that automates the preprocessing workflow for smart telescopes, including file conversion, registration, stacking, and SPCC color calibration.
-
-**Supported Telescopes:**
-
-- ZWO Seestar S30
-- ZWO Seestar S50
-- Dwarf 2
-- Dwarf 3
-- Celestron Origin
+A scrpt to generate a cummary report on the outcomes of running the Naztronomy Python script for Smart telescopes.
 
 **Features:**
 
-- Automatic batching for large datasets (>2000 files on Windows)
-- Optional calibration frame support (darks, flats, biases)
-- Automatic master frame creation from calibration files
-- Drizzle integration for improved resolution
-- Background extraction and filtering options
-- Spectrophotometric Color Calibration (SPCC)
-- Save/Load presets functionality
+Provides a summary of:
+ - the time spent in each phase of preprocessing
+ - the yield of key stages (conversion, registration, etc.)
 
-**Demo Video:** [YouTube - Smart Telescope Processing](https://www.youtube.com/watch?v=6v0SHEe0ZJ8)
 
 ## Installation
 
-Two ways to install these scripts:
+To install these scripts:
 
 1. Place the Python `.py` files from this repository in your local Siril scripts directory
-2. Install directly through Siril by going to **Scripts >> Get Scripts** in Siril and searching for "Naztronomy"
 
 ## System Requirements
 
@@ -54,8 +40,8 @@ Two ways to install these scripts:
 
 ## Authors
 
-- **Nazmus Nasir** - [Naztronomy](https://www.naztronomy.com)
-- **Vinu Yamunan** 
+- **Vinu Yamunan**
+- - **Nazmus Nasir** - [Naztronomy](https://www.naztronomy.com) for the underlying main python script
 
 
 ## License
