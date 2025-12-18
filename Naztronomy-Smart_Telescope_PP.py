@@ -3,7 +3,7 @@
 SPDX-License-Identifier: GPL-3.0-or-later
 
 Smart Telescope Preprocessing script
-Version: 2.0.1
+Version: 2.0.2
 =====================================
 
 The author of this script is Nazmus Nasir (Naztronomy) and can be reached at:
@@ -25,6 +25,15 @@ The following subdirectories are optional:
 """
 CHANGELOG:
 
+2.0.2 - Summary Reporting Enhancement:
+      - Added optional summary report generation at end of processing
+      - NEW: siril_log_analyzer.py - standalone log parser for comprehensive analysis
+      - Reports include: execution timing, image filtering waterfall, quality metrics, pattern detection
+      - Zero runtime overhead - analysis runs post-processing
+      - Works on failed/partial runs for debugging
+      - Saves report to processing_summary.txt in working directory
+      - Credit: Vinu Yamunan
+      - Website: https://www.github.com/yvinu/siril-scripts
 2.0.1 - Allowing all os to batch
 2.0.0 - Major version update:
       - Refactored code to use Qt6 instead of Tkinter for the GUI
@@ -77,11 +86,19 @@ from sirilpy import LogColor, NoImageError
 from astropy.io import fits
 import numpy as np
 
+# Import log analyzer for optional summary report generation
+try:
+    from siril_log_analyzer import SirilLogParser
+    LOG_ANALYZER_AVAILABLE = True
+except ImportError:
+    LOG_ANALYZER_AVAILABLE = False
+    print("Warning: siril_log_analyzer.py not found. Summary reports will not be available.")
+
 # from tkinter import filedialog
 
 APP_NAME = "Naztronomy - Smart Telescope Preprocessing"
-VERSION = "2.0.1"
-BUILD = "20251010"
+VERSION = "2.0.2"
+BUILD = "20251217"
 AUTHOR = "Nazmus Nasir"
 WEBSITE = "Naztronomy.com"
 YOUTUBE = "YouTube.com/Naztronomy"
@@ -1186,6 +1203,12 @@ class PreprocessingInterface(QMainWindow):
         )
         spcc_layout.addWidget(self.scan_blackframes_checkbox, 3, 0, 1, 2)
 
+        summary_report_tooltip = "Generate a comprehensive summary report at the end of processing, including execution times, image filtering waterfall, quality metrics, and detected patterns."
+        self.generate_summary_checkbox = QCheckBox("Generate Summary Report")
+        self.generate_summary_checkbox.setToolTip(summary_report_tooltip)
+        self.generate_summary_checkbox.setChecked(True)  # Enabled by default
+        spcc_layout.addWidget(self.generate_summary_checkbox, 4, 0, 1, 2)
+
         # Buttons section
         button_layout = QHBoxLayout()
         button_layout.setContentsMargins(
@@ -1914,6 +1937,38 @@ class PreprocessingInterface(QMainWindow):
             f"Finished at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             LogColor.GREEN,
         )
+
+        # Generate summary report if requested
+        if self.generate_summary_checkbox.isChecked() and LOG_ANALYZER_AVAILABLE:
+            try:
+                self.siril.log("\n" + "="*60, LogColor.BLUE)
+                self.siril.log("Generating Summary Report...", LogColor.BLUE)
+                self.siril.log("="*60 + "\n", LogColor.BLUE)
+                
+                # Get Siril's log file path
+                siril_config_dir = os.path.expanduser("~/.siril")
+                log_file_path = os.path.join(siril_config_dir, "siril.log")
+                
+                if os.path.exists(log_file_path):
+                    analyzer = SirilLogParser(log_file_path)
+                    analyzer.parse()
+                    summary = analyzer.generate_summary()
+                    
+                    # Log the summary
+                    for line in summary.split('\n'):
+                        self.siril.log(line, LogColor.BLUE)
+                    
+                    # Optionally save to file in working directory
+                    report_file = os.path.join(self.current_working_directory, "processing_summary.txt")
+                    analyzer.save_report(report_file)
+                    self.siril.log(f"\nSummary report saved to: {report_file}", LogColor.GREEN)
+                else:
+                    self.siril.log("Could not find Siril log file for analysis.", LogColor.SALMON)
+            except Exception as e:
+                self.siril.log(f"Error generating summary report: {e}", LogColor.SALMON)
+        elif self.generate_summary_checkbox.isChecked() and not LOG_ANALYZER_AVAILABLE:
+            self.siril.log("Summary report requested but siril_log_analyzer.py not found.", LogColor.SALMON)
+        
         self.siril.log(
             """
         Thank you for using the Naztronomy Smart Telescope Preprocessor! 
