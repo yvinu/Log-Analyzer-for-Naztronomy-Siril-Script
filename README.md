@@ -1,4 +1,4 @@
-# Naztronomy - Siril Scripts
+# Naztronomy - Siril Script log analyzer
 
 ## Naztronomy-Smart_Telescope_PP.py
 
